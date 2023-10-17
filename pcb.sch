@@ -370,7 +370,7 @@ Wire Wire Line
 Connection ~ 6000 1450
 Wire Wire Line
 	6000 1450 6000 1600
-Text GLabel 1950 5000 2    50   Input ~ 0
+Text GLabel 1150 5000 0    50   Input ~ 0
 5V
 Text GLabel 5450 6100 2    50   Input ~ 0
 SWDIO
@@ -460,7 +460,7 @@ OSCOUT
 Wire Wire Line
 	1150 3600 1300 3600
 Wire Wire Line
-	1800 5000 1950 5000
+	1300 5000 1150 5000
 Text GLabel 5450 6200 2    50   Input ~ 0
 SWDCLK
 Wire Wire Line
@@ -635,29 +635,29 @@ Wire Notes Line
 	700  4050 2900 4050
 Wire Notes Line
 	6950 4850 9000 4850
-Text GLabel 1900 5100 2    50   Input ~ 0
+Text GLabel 1200 5200 0    50   Input ~ 0
 pTX
-Text GLabel 1900 5200 2    50   Input ~ 0
+Text GLabel 1200 5100 0    50   Input ~ 0
 pRX
 Wire Wire Line
-	1800 5100 1900 5100
+	1300 5200 1200 5200
 Wire Wire Line
-	1800 5200 1900 5200
+	1300 5100 1200 5100
 $Comp
 L power:GND #PWR09
 U 1 1 6519BFBA
-P 1900 5500
-F 0 "#PWR09" H 1900 5250 50  0001 C CNN
-F 1 "GND" H 1905 5327 50  0000 C CNN
-F 2 "" H 1900 5500 50  0001 C CNN
-F 3 "" H 1900 5500 50  0001 C CNN
-	1    1900 5500
+P 1200 5500
+F 0 "#PWR09" H 1200 5250 50  0001 C CNN
+F 1 "GND" H 1205 5327 50  0000 C CNN
+F 2 "" H 1200 5500 50  0001 C CNN
+F 3 "" H 1200 5500 50  0001 C CNN
+	1    1200 5500
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	1900 5300 1900 5500
+	1200 5300 1200 5500
 Wire Wire Line
-	1800 5300 1900 5300
+	1200 5300 1300 5300
 Wire Wire Line
 	3600 3100 3750 3100
 $Comp
@@ -1335,13 +1335,13 @@ $EndComp
 $Comp
 L Connector:Conn_01x04_Male J3
 U 1 1 6556344A
-P 1600 5100
-F 0 "J3" H 1708 5381 50  0000 C CNN
-F 1 "Conn_01x04_Male" H 1708 5290 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 1600 5100 50  0001 C CNN
-F 3 "~" H 1600 5100 50  0001 C CNN
-	1    1600 5100
-	1    0    0    -1  
+P 1500 5200
+F 0 "J3" H 1608 5481 50  0000 C CNN
+F 1 "Conn_01x04_Male" H 1608 5390 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 1500 5200 50  0001 C CNN
+F 3 "~" H 1500 5200 50  0001 C CNN
+	1    1500 5200
+	-1   0    0    1   
 $EndComp
 Wire Wire Line
 	1150 3750 1150 3600
