@@ -20,7 +20,7 @@ module raise2d(h)
 
 module custom_key()
 {
- dsa_row(3) union() { key(); raise2d(1) children(); }
- }
+	dsa_row(3) union() { key(); raise2d(1) children(); }
+}
 
-custom_key() difference(){translate([-9,-9])import(glyph);}
+custom_key() translate([-9,-9]) import(glyph);
