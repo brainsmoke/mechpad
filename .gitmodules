@@ -1,3 +1,6 @@
 [submodule "models/rsheldiii-openSCAD-projects"]
 	path = keycaps/rsheldiii-openSCAD-projects
 	url = https://github.com/rsheldiii/openSCAD-projects.git
+[submodule "firmware/libopencm3"]
+	path = firmware/libopencm3
+	url = https://github.com/libopencm3/libopencm3
