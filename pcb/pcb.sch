@@ -168,14 +168,10 @@ F 3 "" H 3100 2150 50  0001 C CNN
 	1    3100 2150
 	1    0    0    -1  
 $EndComp
-Text GLabel 2950 1050 0    50   Input ~ 0
-VUSB
 Wire Wire Line
 	2950 1050 3100 1050
 Wire Wire Line
 	3100 1050 3100 1300
-Text GLabel 1950 750  2    50   Input ~ 0
-VUSB
 Wire Wire Line
 	1950 750  1850 750 
 Wire Wire Line
@@ -201,8 +197,6 @@ Wire Wire Line
 	6250 1650 6250 1600
 Wire Wire Line
 	6250 1550 6400 1550
-Wire Wire Line
-	6000 1400 6000 1450
 Wire Wire Line
 	6000 1600 6250 1600
 Connection ~ 6250 1600
@@ -254,8 +248,6 @@ F 3 "" H 6700 2100 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	6700 2100 6700 1950
-Text GLabel 5850 900  0    50   Input ~ 0
-VUSB
 Wire Wire Line
 	5850 900  6000 900 
 Wire Wire Line
@@ -363,13 +355,8 @@ F 3 "" H 5800 3600 50  0001 C CNN
 	1    5800 3600
 	1    0    0    -1  
 $EndComp
-Text GLabel 5850 1450 0    50   Input ~ 0
+Text GLabel 5850 900  0    50   Input ~ 0
 5V
-Wire Wire Line
-	5850 1450 6000 1450
-Connection ~ 6000 1450
-Wire Wire Line
-	6000 1450 6000 1600
 Text GLabel 1150 5000 0    50   Input ~ 0
 5V
 Text GLabel 5450 6100 2    50   Input ~ 0
@@ -659,7 +646,7 @@ Wire Wire Line
 Wire Wire Line
 	1200 5300 1300 5300
 Wire Wire Line
-	3600 3100 3750 3100
+	3600 3100 3650 3100
 $Comp
 L Device:R R1
 U 1 1 64EF2548
@@ -2252,4 +2239,38 @@ Wire Wire Line
 	950  9250 950  10050
 Wire Wire Line
 	950  10050 1650 10050
+Wire Wire Line
+	6000 1400 6000 1600
+Text GLabel 1950 750  2    50   Input ~ 0
+5V
+Text GLabel 2950 1050 0    50   Input ~ 0
+5V
+$Comp
+L Switch:SW_SPST SW1
+U 1 1 654F5704
+P 3650 2750
+F 0 "SW1" V 3696 2662 50  0000 R CNN
+F 1 "SW_SPST" V 3605 2662 50  0000 R CNN
+F 2 "Button_Switch_SMD:SW_Push_1P1T_NO_CK_KMR2" H 3650 2750 50  0001 C CNN
+F 3 "~" H 3650 2750 50  0001 C CNN
+	1    3650 2750
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	3650 2950 3650 3100
+Connection ~ 3650 3100
+Wire Wire Line
+	3650 3100 3750 3100
+Text GLabel 3400 2500 0    50   Input ~ 0
+3V3
+Wire Wire Line
+	3650 2550 3650 2500
+Wire Wire Line
+	3650 2500 3400 2500
+Text GLabel 3400 5600 0    50   Input ~ 0
+BOOT0
+Wire Wire Line
+	3900 5600 3400 5600
+Text Notes 3100 5750 0    50   ~ 0
+re-use button(?)
 $EndSCHEMATC
