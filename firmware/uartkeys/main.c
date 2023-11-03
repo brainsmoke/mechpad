@@ -188,7 +188,7 @@ n+=1;
 			for (i=0; i<N_LEDS; i++)
 			{
 				f->data[i*3+0] = wave[ (i*16+n)&0xff ]>>3;
-				f->data[i*3+1] = wave[ (i*16+n+85)&0xff ]>>3;
+				f->data[i*3+1] = wave[ (i*16+n+85)&0xff ]>>2;
 				f->data[i*3+2] = wave[ (i*16+n+170)&0xff ]>>3;
 			}
 			break;
