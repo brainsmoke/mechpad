@@ -26,13 +26,39 @@
  */
 
 #include <stdint.h>
+#include <string.h>
 
 #include <libopencmsis/core_cm3.h>
 
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
+#include <libopencm3/stm32/usart.h>
 
 #include "ws2812_new.h"
+
+
+static const uint32_t select_row[N_ROWS] = SELECT_ROWS;
+static const uint16_t column_lookup[N_COLUMNS] = COLUMN_LOOKUP;
+static const uint16_t keys[N_KEYS] = KEY_MAPPING;
+
+static uint16_t debounce[N_KEYS];
+
+enum
+{
+	KEY_UP = 0,
+	KEY_DOWN,
+	KEY_PRESSED,
+};
+
+static uint16_t status[N_KEYS];
+
+static void keystate_init(void)
+{
+	memset(debounce, 0, sizeof(debounce));
+	memset(status, 0, sizeof(status));
+	gpio_mode_setup(PORT_KEY_ROWS, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, MASK_KEY_ROWS);
+	gpio_mode_setup(PORT_KEY_COLUMNS, GPIO_MODE_INPUT, GPIO_PUPD_PULLDOWN, MASK_KEY_COLUMNS);
+}
 
 static void enable_sys_tick(uint32_t ticks)
 {
@@ -44,7 +70,45 @@ static void enable_sys_tick(uint32_t ticks)
 volatile uint32_t tick=0;
 void SysTick_Handler(void)
 {
-	ws2812_write();
+	if ( (tick & 3) == 0)
+		ws2812_write();
+
+	uint32_t row = (tick>>1)%N_ROWS;
+	if ( !(tick & 1) )
+	{
+		GPIO_BSRR(PORT_KEY_ROWS) = select_row[row];
+	}
+	else
+	{
+		int col;
+		uint16_t port = gpio_get(PORT_KEY_COLUMNS, MASK_KEY_COLUMNS);
+		for (col=0; col<N_COLUMNS; col++)
+		{
+			int key = col*N_ROWS+row;
+			if (debounce[key] > 0)
+			{
+				debounce[key]--;
+				continue;
+			}
+
+			if (status[key] == KEY_DOWN) /* key press not registered yet */
+				continue;
+			
+			int pressed = (port & column_lookup[col]);
+
+			if (pressed && status[key] == KEY_UP)
+			{
+				status[key] = KEY_DOWN;
+				debounce[key] = DEBOUNCE_COUNTDOWN;
+			}
+			if (!pressed && status[key] != KEY_UP)
+			{
+				status[key] = KEY_UP;
+				debounce[key] = DEBOUNCE_COUNTDOWN;
+			}
+		}
+	}
+
 	tick+=1;
 }
 
@@ -101,6 +165,13 @@ uint16_t wave[256] =
 	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
 };
 
+enum
+{
+	OFF,
+	PARTY,
+	SLEEP,
+} state;
+
 static void prepare_next_frame(frame_t *f)
 {
 
@@ -108,24 +179,73 @@ static uint8_t n = 0;
 n+=1;
 
 	int i;
-	for (i=0; i<N_VALUES; i+=3)
+	switch (state)
 	{
-		f->data[i] = wave[ (n)&0xff ]>>3;
-		f->data[i+1] = wave[ (n+85)&0xff ]>>3;
-		f->data[i+2] = wave[ (n+170)&0xff ]>>3;
+		case PARTY:
+			for (i=0; i<N_VALUES; i+=3)
+			{
+				f->data[i+0] = wave[ (i*16+n)&0xff ]>>3;
+				f->data[i+1] = wave[ (i*16+n+85)&0xff ]>>3;
+				f->data[i+2] = wave[ (i*16+n+170)&0xff ]>>3;
+			}
+			break;
+		case SLEEP:
+			for (i=0; i<N_VALUES; i+=3)
+			{
+				f->data[i+0] = 0;
+				f->data[i+1] = wave[ n&0xff]>>4;
+				f->data[i+2] = 0;
+			}
+			break;
+		default:
+			for (i=0; i<N_VALUES; i++)
+				f->data[i] = 0;
+			break;
 	}
+}
+
+static void init(void)
+{
+	rcc_clock_setup_in_hsi_out_48mhz();
+	rcc_periph_clock_enable(RCC_GPIOA);
+	rcc_periph_clock_enable(RCC_GPIOB);
+	rcc_periph_clock_enable(RCC_USART2);
+
+	gpio_mode_setup(PORT_LED_DATA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, MASK_LED_DATA);
+	gpio_mode_setup(PORT_UART_TX, GPIO_MODE_AF, GPIO_PUPD_NONE, PIN_UART_TX);
+	gpio_mode_setup(PORT_UART_RX, GPIO_MODE_AF, GPIO_PUPD_NONE, PIN_UART_RX);
+	gpio_set_af(PORT_UART_TX, GPIO_AF1, PIN_UART_TX);
+	gpio_set_af(PORT_UART_RX, GPIO_AF1, PIN_UART_RX);
+
+    USART_CR1(UART) = 0;
+    USART_BRR(UART) = UART_BAUDRATE_PRESCALE;
+    USART_CR1(UART) = USART_CR1_RE | USART_CR1_TE | USART_CR1_UE;
+
+
+	ws2812_init();
+	keystate_init();
+
+	enable_sys_tick(F_SYS_TICK_CLK/4000);
+}
+
+static void uart_putchar(int c)
+{
+	while ( (USART_ISR(UART) & USART_ISR_TXE) == 0 );
+	USART_TDR(UART) = (uint8_t)c;
+}
+
+
+static int uart_getchar(void)
+{
+	if ( (USART_ISR(UART) & USART_ISR_RXNE) != 0 )
+		return (uint8_t)USART_RDR(UART);
+	else
+		return -1;
 }
 
 int main(void)
 {
-	rcc_clock_setup_in_hsi_out_48mhz();
-	rcc_periph_clock_enable(RCC_GPIOA);
-	gpio_mode_setup(PORT_LED_DATA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, MASK_LED_DATA);
-
-	//enable_sys_tick(SYSTICK_PERIOD);
-	enable_sys_tick(F_SYS_TICK_CLK/1000);
-	ws2812_init();
-
+	init();
 	uint32_t t_last=tick;
 
 	frame_t *f = NULL;
@@ -139,6 +259,24 @@ int main(void)
 			prepare_next_frame(f);
 			ws2812_swap_frame();
 			t_last += 50;
+		}
+
+		int key;
+		for (key=0; key<N_KEYS; key++)
+		{
+			if (status[key] == KEY_DOWN)
+			{
+				uart_putchar(keys[key]);
+				status[key] = KEY_PRESSED;
+			}
+		}
+
+		switch (uart_getchar())
+		{
+			case 'P': state = PARTY; break;
+			case 'O': state = OFF; break;
+			case 'S': state = SLEEP; break;
+			default : break;
 		}
 	}
 }
