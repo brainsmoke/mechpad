@@ -35,30 +35,7 @@
 #include <libopencm3/stm32/usart.h>
 
 #include "ws2812_new.h"
-
-
-static const uint32_t select_row[N_ROWS] = SELECT_ROWS;
-static const uint16_t column_lookup[N_COLUMNS] = COLUMN_LOOKUP;
-static const uint16_t keys[N_KEYS] = KEY_MAPPING;
-
-static uint16_t debounce[N_KEYS];
-
-enum
-{
-	KEY_UP = 0,
-	KEY_DOWN,
-	KEY_PRESSED,
-};
-
-static uint16_t status[N_KEYS];
-
-static void keystate_init(void)
-{
-	memset(debounce, 0, sizeof(debounce));
-	memset(status, 0, sizeof(status));
-	gpio_mode_setup(PORT_KEY_ROWS, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, MASK_KEY_ROWS);
-	gpio_mode_setup(PORT_KEY_COLUMNS, GPIO_MODE_INPUT, GPIO_PUPD_PULLDOWN, MASK_KEY_COLUMNS);
-}
+#include "keypad.h"
 
 static void enable_sys_tick(uint32_t ticks)
 {
@@ -73,41 +50,7 @@ void SysTick_Handler(void)
 	if ( (tick & 3) == 0)
 		ws2812_write();
 
-	uint32_t row = (tick>>1)%N_ROWS;
-	if ( !(tick & 1) )
-	{
-		GPIO_BSRR(PORT_KEY_ROWS) = select_row[row];
-	}
-	else
-	{
-		int col;
-		uint16_t port = gpio_get(PORT_KEY_COLUMNS, MASK_KEY_COLUMNS);
-		for (col=0; col<N_COLUMNS; col++)
-		{
-			int key = col*N_ROWS+row;
-			if (debounce[key] > 0)
-			{
-				debounce[key]--;
-				continue;
-			}
-
-			if (status[key] == KEY_DOWN) /* key press not registered yet */
-				continue;
-			
-			int pressed = (port & column_lookup[col]);
-
-			if (pressed && status[key] == KEY_UP)
-			{
-				status[key] = KEY_DOWN;
-				debounce[key] = DEBOUNCE_COUNTDOWN;
-			}
-			if (!pressed && status[key] != KEY_UP)
-			{
-				status[key] = KEY_UP;
-				debounce[key] = DEBOUNCE_COUNTDOWN;
-			}
-		}
-	}
+	keypad_poll();
 
 	tick+=1;
 }
@@ -178,8 +121,8 @@ enum
 static void prepare_next_frame(frame_t *f)
 {
 
-static uint16_t n = 0;
-n+=1;
+	static uint16_t n = 0;
+	n+=1;
 
 	int i;
 	switch (state)
@@ -248,9 +191,8 @@ static void init(void)
     USART_BRR(UART) = UART_BAUDRATE_PRESCALE;
     USART_CR1(UART) = USART_CR1_RE | USART_CR1_TE | USART_CR1_UE;
 
-
 	ws2812_init();
-	keystate_init();
+	keypad_init();
 
 	enable_sys_tick(F_SYS_TICK_CLK/4000);
 }
@@ -261,13 +203,26 @@ static void uart_putchar(int c)
 	USART_TDR(UART) = (uint8_t)c;
 }
 
-
 static int uart_getchar(void)
 {
 	if ( (USART_ISR(UART) & USART_ISR_RXNE) != 0 )
 		return (uint8_t)USART_RDR(UART);
 	else
 		return -1;
+}
+
+static const uint16_t keymap[N_KEYS] = KEY_MAPPING;
+
+static volatile uint8_t key_event[N_KEYS];
+
+void keypad_down(int key)
+{
+	key_event[key] = 1;
+}
+
+void keypad_up(int key)
+{
+	(void)key;
 }
 
 int main(void)
@@ -291,10 +246,10 @@ int main(void)
 		int key;
 		for (key=0; key<N_KEYS; key++)
 		{
-			if (status[key] == KEY_DOWN)
+			if (key_event[key])
 			{
-				uart_putchar(keys[key]);
-				status[key] = KEY_PRESSED;
+				uart_putchar(keymap[key]);
+				key_event[key] = 0;
 			}
 		}
 

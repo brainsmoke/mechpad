@@ -2,7 +2,7 @@
 OPENCM3_DIR=../libopencm3
 SHARED_DIR=../common
 PROJECT=uartkeys
-CFILES=main.c ws2812_new_dma.c ws2812_new.c
+CFILES=main.c ws2812_new_dma.c ws2812_new.c keypad.c
 
 # target chip
 DEVICE=stm32f030c8t6
