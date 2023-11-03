@@ -170,31 +170,58 @@ enum
 	OFF,
 	PARTY,
 	SLEEP,
+	RED,
+	GREEN,
+	BLUE,
 } state;
 
 static void prepare_next_frame(frame_t *f)
 {
 
-static uint8_t n = 0;
+static uint16_t n = 0;
 n+=1;
 
 	int i;
 	switch (state)
 	{
 		case PARTY:
-			for (i=0; i<N_VALUES; i+=3)
+			for (i=0; i<N_LEDS; i++)
 			{
-				f->data[i+0] = wave[ (i*16+n)&0xff ]>>3;
-				f->data[i+1] = wave[ (i*16+n+85)&0xff ]>>3;
-				f->data[i+2] = wave[ (i*16+n+170)&0xff ]>>3;
+				f->data[i*3+0] = wave[ (i*16+n)&0xff ]>>3;
+				f->data[i*3+1] = wave[ (i*16+n+85)&0xff ]>>3;
+				f->data[i*3+2] = wave[ (i*16+n+170)&0xff ]>>3;
 			}
 			break;
 		case SLEEP:
 			for (i=0; i<N_VALUES; i+=3)
 			{
 				f->data[i+0] = 0;
-				f->data[i+1] = wave[ n&0xff]>>4;
+				f->data[i+1] = (wave[ (n>>1)&0xff] + wave[ ((n+1)>>1)&0xff])>>5;
 				f->data[i+2] = 0;
+			}
+			break;
+		case RED:
+			for (i=0; i<N_LEDS; i++)
+			{
+				f->data[i*3+0] = 0;
+				f->data[i*3+1] = wave[ (i*16 + n)&0xff]>>2;
+				f->data[i*3+2] = 0;
+			}
+			break;
+		case GREEN:
+			for (i=0; i<N_LEDS; i++)
+			{
+				f->data[i*3+0] = wave[ (i*16 + n)&0xff]>>2;
+				f->data[i*3+1] = 0;
+				f->data[i*3+2] = 0;
+			}
+			break;
+		case BLUE:
+			for (i=0; i<N_LEDS; i++)
+			{
+				f->data[i*3+0] = 0;
+				f->data[i*3+1] = 0;
+				f->data[i*3+2] = wave[ (i*16 + n)&0xff]>>2;
 			}
 			break;
 		default:
@@ -273,9 +300,12 @@ int main(void)
 
 		switch (uart_getchar())
 		{
-			case 'P': state = PARTY; break;
-			case 'O': state = OFF; break;
-			case 'S': state = SLEEP; break;
+			case 'O': case 'o': state = OFF; break;
+			case 'P': case 'p': state = PARTY; break;
+			case 'S': case 's': state = SLEEP; break;
+			case 'R': case 'r': state = RED; break;
+			case 'G': case 'g': state = GREEN; break;
+			case 'B': case 'b': state = BLUE; break;
 			default : break;
 		}
 	}
