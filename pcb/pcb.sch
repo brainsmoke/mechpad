@@ -586,17 +586,6 @@ Wire Wire Line
 	5450 6000 5200 6000
 Wire Notes Line
 	3050 2350 3050 7750
-$Comp
-L MCU_ST_STM32F1:STM32F103CBTx U1
-U 1 1 64DE1E8C
-P 4600 5000
-F 0 "U1" H 4550 3411 50  0000 C CNN
-F 1 "STM32F103CBTx" H 4550 3320 50  0000 C CNN
-F 2 "Package_QFP:LQFP-48_7x7mm_P0.5mm" H 4000 3600 50  0001 R CNN
-F 3 "http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/CD00161566.pdf" H 4600 5000 50  0001 C CNN
-	1    4600 5000
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	4800 2950 5250 2950
 Text GLabel 4850 1600 2    50   Input ~ 0
@@ -2181,4 +2170,15 @@ Wire Wire Line
 	5400 2650 5550 2650
 Text GLabel 5550 2650 2    50   Input ~ 0
 RESET
+$Comp
+L MCU_ST_STM32F0:STM32F072C8Tx U1
+U 1 1 65486446
+P 4600 5000
+F 0 "U1" H 4550 3411 50  0000 C CNN
+F 1 "STM32F072C8Tx" H 4550 3320 50  0000 C CNN
+F 2 "Package_QFP:LQFP-48_7x7mm_P0.5mm" H 4000 3600 50  0001 R CNN
+F 3 "http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/DM00090510.pdf" H 4600 5000 50  0001 C CNN
+	1    4600 5000
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
