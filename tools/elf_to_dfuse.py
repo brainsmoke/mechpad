@@ -90,7 +90,7 @@ def defuse_suffix(body_crc, id_vendor, id_product, version):
     return suffix
 
 def defuse_prefix(size, n_targets):
-    return b'DfuSe\x01'+struct.pack(">IB", size, n_targets)
+    return b'DfuSe\x01'+struct.pack("<IB", size, n_targets)
 
 def defuse_target_prefix(images_size, n_elements, alt_setting=ALT_SETTING, name=None):
     if name == None:
@@ -99,10 +99,10 @@ def defuse_target_prefix(images_size, n_elements, alt_setting=ALT_SETTING, name=
     else:
         named = 1
 
-    return b'Target'+struct.pack(">BI255sII", alt_setting, named, name, images_size, n_elements)
+    return b'Target'+struct.pack("<BI255sII", alt_setting, named, name, images_size, n_elements)
 
 def defuse_image(addr, data):
-    return struct.pack(">II", addr, len(data)) + data
+    return struct.pack("<II", addr, len(data)) + data
 
 def defuse_get_binary( chunks, id_vendor, id_product, version=0xffff ):
     images = [ defuse_image(addr, data) for addr, data in get_chunks(file_in) ]
