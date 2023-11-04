@@ -92,7 +92,6 @@ void ws2812_full_transfer(void)
 
 static void clear_buf(frame_t *f)
 {
-	/* bits are inverted, since we use BRR */
 	memset(f, 0, sizeof(*f));
 }
 
