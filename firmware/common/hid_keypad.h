@@ -34,6 +34,8 @@
 #define HID_KEYBOARD_PAGE (0x07)
 #define HID_CUSTOMER_PAGE (0x0c)
 
+/* key definitions from: https://www.usb.org/sites/default/files/hut1_4.pdf */
+
 #define KEY_POWER_DOWN   (HID_KEY(HID_GENERIC_DESKTOP_PAGE, 0x81))
 #define KEY_SLEEP        (HID_KEY(HID_GENERIC_DESKTOP_PAGE, 0x82))
 #define KEY_WAKE_UP      (HID_KEY(HID_GENERIC_DESKTOP_PAGE, 0x83))
