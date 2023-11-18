@@ -38,28 +38,7 @@
 #include "keypad.h"
 #include "hid_keypad.h"
 
-static const uint32_t keys[N_KEYS] =
-{
-	KEY_SLEEP,
-	KEY_WAKE_UP,
-	KEY_WARM_RESTART,
-	KEY_POWER_DOWN,
-
-	KEY_PLAY,
-	KEY_PAUSE,
-	KEY_SCAN_PREVIOUS_TRACK,
-	KEY_SCAN_NEXT_TRACK,
-
-	KEY_VOLUME_DOWN,
-	KEY_VOLUME_UP,
-	KEY_CALCULATOR,
-	KEY_INTERNET_BROWSER,
-
-	KEY_A,
-	KEY_B,
-	KEY_C,
-	KEY_D,
-};
+static const uint32_t keys[N_KEYS] = KEY_MAPPING;
 
 static void enable_sys_tick(uint32_t ticks)
 {
@@ -71,11 +50,7 @@ static void enable_sys_tick(uint32_t ticks)
 volatile uint32_t tick=0;
 void SysTick_Handler(void)
 {
-	if ( (tick & 3) == 0)
-		ws2812_write();
-
-	keypad_poll();
-
+	ws2812_write();
 	tick+=1;
 }
 
@@ -214,7 +189,7 @@ static void init(void)
 	keypad_init();
 	usb_hid_keypad_init(keys, N_KEYS);
 
-	enable_sys_tick(F_SYS_TICK_CLK/4000);
+	enable_sys_tick(F_SYS_TICK_CLK/1000);
 }
 
 void keypad_down(int key)
@@ -236,14 +211,15 @@ int main(void)
 
 	for(;;)
 	{
+		keypad_poll();
 		usb_hid_keypad_poll();
 		f = ws2812_get_frame();
 
-		if (f != NULL && (tick-t_last > 50) )
+		if (f != NULL && (tick-t_last > 12) )
 		{
 			prepare_next_frame(f);
 			ws2812_swap_frame();
-			t_last += 50;
+			t_last += 12;
 		}
 	}
 }

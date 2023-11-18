@@ -28,41 +28,6 @@
  *
  */
 
-
-#define HID_KEY(page, key) ( (((page)&0xffff)<<16) | ((key)&0xffff) )
-#define HID_GENERIC_DESKTOP_PAGE (0x01)
-#define HID_KEYBOARD_PAGE (0x07)
-#define HID_CONSUMER_PAGE (0x0c)
-
-/* key definitions from: https://www.usb.org/sites/default/files/hut1_4.pdf */
-
-#define KEY_POWER_DOWN   (HID_KEY(HID_GENERIC_DESKTOP_PAGE, 0x81))
-#define KEY_SLEEP        (HID_KEY(HID_GENERIC_DESKTOP_PAGE, 0x82))
-#define KEY_WAKE_UP      (HID_KEY(HID_GENERIC_DESKTOP_PAGE, 0x83))
-#define KEY_COLD_RESTART (HID_KEY(HID_GENERIC_DESKTOP_PAGE, 0x8e))
-#define KEY_WARM_RESTART (HID_KEY(HID_GENERIC_DESKTOP_PAGE, 0x8f))
-
-#define KEY_PLAY                (HID_KEY(HID_CONSUMER_PAGE, 0xb0))
-#define KEY_PAUSE               (HID_KEY(HID_CONSUMER_PAGE, 0xb1))
-#define KEY_RECORD              (HID_KEY(HID_CONSUMER_PAGE, 0xb2))
-#define KEY_FAST_FORWARD        (HID_KEY(HID_CONSUMER_PAGE, 0xb3))
-#define KEY_REWIND              (HID_KEY(HID_CONSUMER_PAGE, 0xb4))
-#define KEY_SCAN_NEXT_TRACK     (HID_KEY(HID_CONSUMER_PAGE, 0xb5))
-#define KEY_SCAN_PREVIOUS_TRACK (HID_KEY(HID_CONSUMER_PAGE, 0xb6))
-#define KEY_STOP                (HID_KEY(HID_CONSUMER_PAGE, 0xb7))
-#define KEY_EJECT               (HID_KEY(HID_CONSUMER_PAGE, 0xb8))
-
-#define KEY_CALCULATOR          (HID_KEY(HID_CONSUMER_PAGE, 0x192))
-#define KEY_INTERNET_BROWSER    (HID_KEY(HID_CONSUMER_PAGE, 0x196))
-
-#define KEY_VOLUME_UP           (HID_KEY(HID_KEYBOARD_PAGE, 0x80))
-#define KEY_VOLUME_DOWN         (HID_KEY(HID_KEYBOARD_PAGE, 0x81))
-
-#define KEY_A                   (HID_KEY(HID_KEYBOARD_PAGE, 0x04))
-#define KEY_B                   (HID_KEY(HID_KEYBOARD_PAGE, 0x05))
-#define KEY_C                   (HID_KEY(HID_KEYBOARD_PAGE, 0x06))
-#define KEY_D                   (HID_KEY(HID_KEYBOARD_PAGE, 0x07))
-
 #include <stdint.h>
 #include <stddef.h>
 
