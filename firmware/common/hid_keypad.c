@@ -50,7 +50,7 @@ static uint8_t report[32];
 static uint8_t control[128];
 
 static uint32_t report_bits;
-static volatile uint32_t need_update;
+static volatile uint32_t need_update, usb_ready;
 
 #define VERSION_USB_2_0 (0x0200)
 
@@ -261,6 +261,8 @@ static enum usbd_request_return_codes hid_control_callback(usbd_device *dev,
 	*buf = report_descriptor;
 	*len = usb_hid_desciptor.wDescriptorLength;
 
+	usb_ready=1;
+
 	return USBD_REQ_HANDLED;
 }
 
@@ -296,6 +298,7 @@ int usb_hid_keypad_init(const uint32_t keys[], size_t n_keys)
 	usbd_register_set_config_callback(device, hid_set_config);
 
 	need_update = 1;
+	usb_ready = 0;
 
 	return 1;
 }
@@ -318,7 +321,7 @@ void usb_hid_keypad_key_down(uint32_t key_index)
 
 void usb_hid_keypad_poll(void)
 {
-	if (need_update)
+	if (usb_ready && need_update)
 	{
 		need_update = 0;
 		if (usbd_ep_write_packet(device, endpoint_desc.bEndpointAddress,
