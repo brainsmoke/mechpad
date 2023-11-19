@@ -124,36 +124,42 @@ static void prepare_next_frame(frame_t *f)
 	n+=1;
 
 	int i;
+	uint32_t b = n&7;
+	uint32_t a = 8-b;
+	uint32_t m = n>>3;
 	switch (state)
 	{
 		case PARTY:
 			for (i=0; i<N_LEDS; i++)
 			{
-				f->data[i*3+0] = wave[ (i*16+n)&0xff ]>>1;
-				f->data[i*3+1] = wave[ (i*16+n+85)&0xff ];
-				f->data[i*3+2] = wave[ (i*16+n+170)&0xff ]>>1;
+				f->data[i*3+0] = ( a*wave[ (i*16+m)&0xff ] + b*wave[ (i*16+m+1)&0xff ] )>>4;
+				f->data[i*3+1] = ( a*wave[ (i*16+m+85)&0xff ] + b*wave[ (i*16+m+86)&0xff ] )>>3;
+				f->data[i*3+2] = ( a*wave[ (i*16+m+170)&0xff ] + b*wave[ (i*16+m+171)&0xff ] )>>4;
 			}
 			break;
 		case SLEEP:
-			for (i=0; i<N_VALUES; i+=3)
+			m >>= 1;
+			b = (n>>1)&7;
+			a = 8-b;
+			for (i=0; i<N_LEDS; i++)
 			{
-				f->data[i+0] = 0;
-				f->data[i+1] = (wave[ (n>>1)&0xff] + wave[ ((n+1)>>1)&0xff])>>3;
-				f->data[i+2] = 0;
+				f->data[i*3+0] = 0;
+				f->data[i*3+1] = ( a*wave[ m&0xff ] + b*wave[ (m+1)&0xff ] )>>5;
+				f->data[i*3+2] = 0;
 			}
 			break;
 		case RED:
 			for (i=0; i<N_LEDS; i++)
 			{
 				f->data[i*3+0] = 0;
-				f->data[i*3+1] = wave[ (i*16 + n)&0xff];
+				f->data[i*3+1] = ( a*wave[ (i*16+m)&0xff ] + b*wave[ (i*16+m+1)&0xff ] )>>3;
 				f->data[i*3+2] = 0;
 			}
 			break;
 		case GREEN:
 			for (i=0; i<N_LEDS; i++)
 			{
-				f->data[i*3+0] = wave[ (i*16 + n)&0xff];
+				f->data[i*3+0] = ( a*wave[ (i*16+m)&0xff ] + b*wave[ (i*16+m+1)&0xff ] )>>3;;
 				f->data[i*3+1] = 0;
 				f->data[i*3+2] = 0;
 			}
@@ -163,7 +169,7 @@ static void prepare_next_frame(frame_t *f)
 			{
 				f->data[i*3+0] = 0;
 				f->data[i*3+1] = 0;
-				f->data[i*3+2] = wave[ (i*16 + n)&0xff];
+				f->data[i*3+2] = ( a*wave[ (i*16+m)&0xff ] + b*wave[ (i*16+m+1)&0xff ] )>>3;;
 			}
 			break;
 		default:
@@ -189,7 +195,7 @@ static void init(void)
 	keypad_init();
 	usb_hid_keypad_init(keys, N_KEYS);
 
-	enable_sys_tick(F_SYS_TICK_CLK/1000);
+	enable_sys_tick(F_SYS_TICK_CLK/1600);
 }
 
 void keypad_down(int key)
@@ -215,11 +221,11 @@ int main(void)
 		usb_hid_keypad_poll();
 		f = ws2812_get_frame();
 
-		if (f != NULL && (tick-t_last > 12) )
+		if (f != NULL && (tick-t_last > 4) )
 		{
 			prepare_next_frame(f);
 			ws2812_swap_frame();
-			t_last += 12;
+			t_last += 4;
 		}
 	}
 }
