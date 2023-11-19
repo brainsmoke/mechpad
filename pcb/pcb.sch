@@ -2168,4 +2168,38 @@ F 3 "http://www.st.com/st-web-ui/static/active/en/resource/technical/document/da
 	1    4600 5000
 	1    0    0    -1  
 $EndComp
+$Comp
+L Connector:Conn_01x03_Male J4
+U 1 1 655CD038
+P 9500 8050
+F 0 "J4" H 9608 8331 50  0000 C CNN
+F 1 "Conn_01x03_Male" H 9608 8240 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 9500 8050 50  0001 C CNN
+F 3 "~" H 9500 8050 50  0001 C CNN
+	1    9500 8050
+	1    0    0    -1  
+$EndComp
+Text GLabel 10000 7950 2    50   Input ~ 0
+5V
+$Comp
+L power:GND #PWR0115
+U 1 1 655CD4F8
+P 10000 8250
+F 0 "#PWR0115" H 10000 8000 50  0001 C CNN
+F 1 "GND" H 10005 8077 50  0000 C CNN
+F 2 "" H 10000 8250 50  0001 C CNN
+F 3 "" H 10000 8250 50  0001 C CNN
+	1    10000 8250
+	1    0    0    -1  
+$EndComp
+Text GLabel 10000 8050 2    50   Input ~ 0
+LEDDATA
+Wire Wire Line
+	9700 7950 10000 7950
+Wire Wire Line
+	9700 8050 10000 8050
+Wire Wire Line
+	9700 8150 10000 8150
+Wire Wire Line
+	10000 8150 10000 8250
 $EndSCHEMATC
