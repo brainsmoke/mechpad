@@ -47,17 +47,6 @@ F 3 "~" H 6000 1800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:Ferrite_Bead FB1
-U 1 1 64CACF7B
-P 6000 1250
-F 0 "FB1" H 6137 1296 50  0000 L CNN
-F 1 "Ferrite_Bead" H 6137 1205 50  0000 L CNN
-F 2 "Resistor_SMD:R_0603_1608Metric" V 5930 1250 50  0001 C CNN
-F 3 "~" H 6000 1250 50  0001 C CNN
-	1    6000 1250
-	1    0    0    -1  
-$EndComp
-$Comp
 L Connector:USB_C_Receptacle_USB2.0 J1
 U 1 1 64CAE3E8
 P 1100 1450
@@ -249,9 +238,7 @@ $EndComp
 Wire Wire Line
 	6700 2100 6700 1950
 Wire Wire Line
-	5850 900  6000 900 
-Wire Wire Line
-	6000 900  6000 1100
+	5850 1400 6000 1400
 Text GLabel 3400 3700 0    50   Input ~ 0
 RESET
 Text GLabel 7450 1300 2    50   Input ~ 0
@@ -355,7 +342,7 @@ F 3 "" H 5800 3600 50  0001 C CNN
 	1    5800 3600
 	1    0    0    -1  
 $EndComp
-Text GLabel 5850 900  0    50   Input ~ 0
+Text GLabel 5850 1400 0    50   Input ~ 0
 5V
 Text GLabel 1150 5000 0    50   Input ~ 0
 5V
