@@ -2,7 +2,7 @@
 OPENCM3_DIR=../libopencm3
 SHARED_DIR=../common
 PROJECT=usbhid
-CFILES=main.c ws2812_new_dma.c ws2812_new.c keypad.c hid_keypad.c
+CFILES=main.c ws2812_new_dma.c ws2812_new.c keypad.c hid_keypad.c ani.c
 
 DFU_FILE=$(PROJECT).dfu
 
