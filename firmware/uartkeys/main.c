@@ -119,11 +119,11 @@ int main(void)
 	{
 		f = ws2812_get_frame();
 
-		if (f != NULL && (tick-t_last > 50) )
+		if (f != NULL && (tick-t_last > 16) )
 		{
 			prepare_next_frame(f);
 			ws2812_swap_frame();
-			t_last += 50;
+			t_last += 16;
 		}
 
 		int key;
