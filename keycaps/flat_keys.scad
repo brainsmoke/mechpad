@@ -23,4 +23,8 @@ module custom_key()
 	dsa_row(3) union() { key(); raise2d(1) children(); }
 }
 
+//glyph="svg/gb.svg";
+//$keytop_thickness = 1;
+//$wall_thickness = 4;
+
 custom_key() translate([-9,-9]) import(glyph);
