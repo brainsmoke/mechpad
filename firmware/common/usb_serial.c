@@ -266,8 +266,10 @@ static void endpoint_setup(usbd_device *dev,
 
 /* just read the packet 'beyond' the buffer, copy the wraparound */
 static uint8_t rx_buf[USB_RX_BUFSIZE+PACKET_SIZE_FULL_SPEED];
+
 static size_t rx_start, rx_len;
 
+/* not re-entrant-safe, assumes polling */
 static void serial_rx_cb(usbd_device *dev, uint8_t ep)
 {
 	size_t rx_end = rx_start+rx_len;
@@ -326,7 +328,10 @@ int usb_serial_getchar(void)
 void usb_serial_putchar(int c)
 {
 	uint8_t buf = c;
-	while ( usbd_ep_write_packet(device, UART_DEVICE_TO_HOST_ENDPOINT, &buf, 1) == 0 );
+	while ( usbd_ep_write_packet(device, UART_DEVICE_TO_HOST_ENDPOINT, &buf, 1) == 0 )
+	{
+		usbd_poll(device);
+	}
 }
 
 size_t usb_serial_write_noblock(const uint8_t *buf, size_t len)

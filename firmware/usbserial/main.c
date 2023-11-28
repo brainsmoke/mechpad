@@ -36,8 +36,8 @@
 
 #include "ws2812_new.h"
 #include "keypad.h"
-#include "ani.h"
 #include "usb_serial.h"
+#include "ani.h"
 
 static void enable_sys_tick(uint32_t ticks)
 {
@@ -49,11 +49,7 @@ static void enable_sys_tick(uint32_t ticks)
 volatile uint32_t tick=0;
 void SysTick_Handler(void)
 {
-	if ( (tick & 3) == 0)
-		ws2812_write();
-
-	keypad_poll();
-
+	ws2812_write();
 	tick+=1;
 }
 
@@ -70,10 +66,10 @@ static void init(void)
 	set_animation(OFF);
 
 	usb_serial_init();
-	enable_sys_tick(F_SYS_TICK_CLK/4000);
+	enable_sys_tick(F_SYS_TICK_CLK/1600);
 }
 
-static const uint16_t keymap[N_KEYS] = KEY_MAPPING;
+static const uint8_t keymap[N_KEYS] = KEY_MAPPING;
 
 static volatile uint8_t key_event[N_KEYS];
 
@@ -96,24 +92,35 @@ int main(void)
 
 	for(;;)
 	{
-		f = ws2812_get_frame();
+		keypad_poll();
 		usb_serial_poll();
+		f = ws2812_get_frame();
 
-		if (f != NULL && (tick-t_last > 16) )
+		if (f != NULL && (tick-t_last > 4) )
 		{
 			prepare_next_frame(f);
 			ws2812_swap_frame();
-			t_last += 16;
+			t_last += 4;
 		}
 
-		int key;
+		int key, n_written, off=0;
+		uint8_t outbuf[N_KEYS];
+		uint8_t ixbuf[N_KEYS];
+
 		for (key=0; key<N_KEYS; key++)
-		{
 			if (key_event[key])
 			{
-				usb_serial_putchar(keymap[key]);
-				key_event[key] = 0;
+				ixbuf[off] = key;
+				outbuf[off] = keymap[key];
+				off += 1;
 			}
+
+		if (off > 0)
+		{
+			n_written = usb_serial_write_noblock(outbuf, off);
+
+			for (off=0; off<n_written; off++)
+				key_event[ixbuf[off]] = 0;
 		}
 
 		switch (usb_serial_getchar())
