@@ -284,17 +284,6 @@ $EndComp
 Wire Wire Line
 	4500 6800 4500 6650
 Connection ~ 4500 6650
-$Comp
-L Device:R R8
-U 1 1 64D6ED4A
-P 4700 1000
-F 0 "R8" H 4630 954 50  0000 R CNN
-F 1 "1k5" H 4630 1045 50  0000 R CNN
-F 2 "Resistor_SMD:R_0603_1608Metric" V 4630 1000 50  0001 C CNN
-F 3 "~" H 4700 1000 50  0001 C CNN
-	1    4700 1000
-	-1   0    0    1   
-$EndComp
 Text GLabel 2500 1800 0    50   Input ~ 0
 USBDP
 Text GLabel 4250 1250 0    50   Input ~ 0
@@ -310,8 +299,6 @@ F 3 "~" H 4500 1250 50  0001 C CNN
 	1    4500 1250
 	0    -1   -1   0   
 $EndComp
-Wire Wire Line
-	4650 1250 4700 1250
 Text GLabel 4250 1600 0    50   Input ~ 0
 USBDM
 $Comp
@@ -325,12 +312,6 @@ F 3 "~" H 4500 1600 50  0001 C CNN
 	1    4500 1600
 	0    -1   -1   0   
 $EndComp
-Text GLabel 4500 750  0    50   Input ~ 0
-3V3
-Wire Wire Line
-	4500 750  4700 750 
-Wire Wire Line
-	4700 750  4700 850 
 $Comp
 L power:GND #PWR0108
 U 1 1 64DC80C5
@@ -470,11 +451,6 @@ Wire Wire Line
 	4250 1250 4350 1250
 Wire Wire Line
 	4250 1600 4350 1600
-Wire Wire Line
-	4700 1150 4700 1250
-Wire Wire Line
-	4700 1250 4850 1250
-Connection ~ 4700 1250
 Wire Wire Line
 	4650 1600 4850 1600
 Wire Notes Line
@@ -2237,4 +2213,6 @@ Wire Wire Line
 	9700 8150 10000 8150
 Wire Wire Line
 	10000 8150 10000 8250
+Wire Wire Line
+	4650 1250 4850 1250
 $EndSCHEMATC
